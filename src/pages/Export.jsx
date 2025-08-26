@@ -1,0 +1,1 @@
+export default function ExportPage(){ return <button onClick={()=>alert("Export ok")}>Export</button>; }
