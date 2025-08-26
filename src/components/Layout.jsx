@@ -1,24 +1,45 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 export default function Layout() {
+  const location = useLocation();
   const menu = [
     { to: "/", label: "Dashboard" },
-    { to: "/explorer", label: "Explorer" },
     { to: "/heatmap", label: "Heatmap" },
-    { to: "/trends", label: "Trends" },
-    { to: "/export", label: "Export" },
+    { to: "/export", label: "Regional Insights" },
+    { to: "/trends", label: "Demand Trends" },
+    { to: "/explorer", label: "Construction Explorer" },
     { to: "/admin/login", label: "Admin" },
   ];
 
   return (
-    <div style={{display:"grid", gridTemplateColumns:"220px 1fr", minHeight:"100vh"}}>
-      <aside style={{borderRight:"1px solid #eee", padding:"16px"}}>
-        <h3>ConstructAI</h3>
-        <nav style={{display:"grid", gap:"8px", marginTop:"12px"}}>
-          {menu.map(m => <Link key={m.to} to={m.to}>{m.label}</Link>)}
+    <div className="app-layout">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div className="brand-icon" aria-hidden>🏛️</div>
+          <div className="brand-text">
+            <div>Construct AI</div>
+            <div className="brand-sub">Skills Analyser</div>
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          {menu.map((m) => (
+            <Link
+              key={m.to}
+              to={m.to}
+              className={
+                "nav-item" + (location.pathname === m.to ? " nav-item-active" : "")
+              }
+            >
+              <span className="nav-bullet" aria-hidden>•</span>
+              <span className="nav-label">{m.label}</span>
+            </Link>
+          ))}
         </nav>
+        <div className="sidebar-footer">
+          <button type="button" className="back-btn">⬅️ Back</button>
+        </div>
       </aside>
-      <main style={{padding:"24px"}}>
+      <main className="app-main">
         <Outlet />
       </main>
     </div>

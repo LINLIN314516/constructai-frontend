@@ -24,8 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -34,6 +33,180 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+/* App layout */
+.app-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.app-main {
+  padding: 24px;
+}
+
+/* Sidebar styles to match the screenshot */
+.sidebar {
+  background: #433a8b;
+  color: #e7e7ff;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-brand {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.brand-icon {
+  font-size: 18px;
+}
+
+.brand-sub {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.sidebar-nav {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #efeefe;
+}
+
+.nav-item:hover {
+  background: #ffffff;
+  color: #403c8a;
+}
+
+.nav-item-active {
+  background: #ffffff;
+  color: #403c8a;
+}
+
+.nav-bullet {
+  opacity: 0.9;
+}
+
+.sidebar-footer {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+
+.back-btn {
+  background: #6c70f7;
+  color: #ffffff;
+}
+
+/* Dashboard styles */
+.dash-page {
+  background-color: #f6f6fb;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.dash-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+}
+
+.dash-period { display: flex; gap: 8px; }
+.pill {
+  background: #e7e7ff;
+  color: #2f2a85;
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 0;
+}
+.pill-icon { width: 28px; text-align: center; cursor: pointer; }
+
+.dash-card {
+  background: #ffffff;
+  border: 1px solid #e9e9f2;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  margin-bottom: 28px;
+}
+
+.card-title { font-size: 16px; color: #3a3a3a; font-weight: 600; margin-bottom: 18px; }
+
+.km-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.km-item { background: #fafafe; border: 1px solid #eeeef8; border-radius: 16px; padding: 22px; }
+.km-label { font-size: 14px; color: #666; margin-bottom: 10px; }
+.km-body { display: flex; align-items: center; gap: 12px; }
+.km-icon { font-size: 22px; }
+.km-icon.up { color: #3a2fb1; }
+.km-text { font-weight: 700; font-size: 20px; color: #222; }
+
+.dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 24px; align-items: stretch; }
+.block-title { font-size: 16px; color: #333; font-weight: 600; margin: 18px 0; }
+
+.map-box { height: 360px; background: #f7f7fb; border: 1px solid #eeeef8; border-radius: 16px; display:flex; align-items:center; justify-content:center; }
+.au-map { width: 320px; height: 210px; background:#e9efff; border:2px solid #6a67d8; border-radius: 20px 40px 30px 15px; position: relative; }
+.au-map .vic { position:absolute; bottom:18px; right:26px; width:32px; height:22px; background:#4a3fc6; border-radius:4px; }
+.au-map .nsw { position:absolute; top:34px; right:20px; width:34px; height:38px; background:#a7a4ef; border-radius:6px; }
+
+.chart-box { height: 360px; background: #fff; border: 1px solid #eeeef8; border-radius: 16px; padding: 6px 0; }
+
+.dash-bottom { margin-top: 24px; }
+.skills-list { display:flex; flex-direction:column; gap: 8px; }
+.skill-row { display:flex; align-items:center; gap:12px; font-size:14px; }
+.skill-index { color:#666; min-width: 10px; }
+.skill-name { font-weight: 600; color:#222; flex:1; }
+.skill-jobs { color:#2f8a4a; font-weight:600; font-size:13px; }
+
+/* Heatmap page */
+.heatmap-page { background:#eef3ff; min-height: calc(100vh - 48px); padding: 16px; border-radius: 12px; }
+.heatmap-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px; }
+.pill-outline { background:#ffffff; border:1px solid #a8c6ff; color:#2f2a85; font-size:16px; font-weight:600; padding:10px 16px; }
+.pill-outline .dot { width:8px; height:8px; border-radius:50%; background:#4aa3ff; display:inline-block; margin-right:8px; }
+
+.filters { display:flex; gap: 12px; }
+.filter-group { background: linear-gradient(0deg, #e1f8e9 0, #e1f8e9 0) padding-box, linear-gradient(90deg,#87b8ff,#8df0b1) border-box; border:1px solid transparent; border-radius:12px; padding:6px; display:flex; align-items:center; gap:10px; }
+.filter-group:first-child { background: linear-gradient(0deg, #eaf3ff 0, #eaf3ff 0) padding-box, linear-gradient(90deg,#87b8ff,#87b8ff) border-box; }
+.filter-label { font-size:12px; color:#9a76c9; position:relative; top:-10px; left:6px; background:transparent; }
+.filter-box { background:#ffffff; border:1px solid #e6e9f5; border-radius:10px; padding:8px 14px; min-width:140px; text-align:left; }
+
+.dropdown { position:relative; }
+.dropdown .menu { position:absolute; top:40px; right:0; background:#ffffff; border:1px solid #e6e9f5; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.08); display:flex; flex-direction:column; overflow:hidden; }
+.dropdown .menu button { padding:10px 14px; text-align:left; background:#fff; border:0; cursor:pointer; }
+.dropdown .menu button:hover { background:#f2f6ff; }
+
+.heatmap-canvas { background:#dfe8ff; border:1px solid #d1dcff; border-radius:16px; padding:12px; min-height: calc(100vh - 160px); display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 40px rgba(255,255,255,0.6); }
+.heatmap-canvas img { width:100%; height:100%; object-fit: contain; border-radius:8px; box-shadow:0 2px 0 rgba(0,0,0,0.05); }
 
 button {
   border-radius: 8px;
@@ -66,3 +239,31 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Regional Insights */
+.insights-page { background:#eef3ff; min-height: calc(100vh - 48px); padding: 16px; border-radius: 12px; }
+.insights-grid { display:grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: center; }
+.insights-map { background:#eaf0ff; border:1px solid #d1dcff; border-radius:16px; padding:16px; display:flex; align-items:center; justify-content:center; position: relative; }
+.insights-map img { width:100%; height: calc(100vh - 160px); object-fit: contain; border-radius:12px; }
+.insights-panel { background:#fff; border:1px solid #ececf5; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+.insights-panel h2 { margin:0 0 10px 0; font-size:28px; }
+.ins-panel-body { display:flex; flex-direction:column; gap:10px; font-size:14px; color:#333; }
+.ins-item { display:flex; gap:10px; line-height:1.4; }
+.ins-item .emoji { width:18px; text-align:center; }
+.ins-list .list-title { font-weight:600; margin:6px 0; }
+.ins-list ul { margin: 4px 0 0 0; padding-left: 18px; display:flex; flex-direction:column; gap:4px; }
+.ins-note { margin-top:8px; font-size:12px; color:#7a7a9a; }
+.ins-actions { display:flex; justify-content:center; margin-top:14px; }
+.export-btn { background:#6c70f7; color:#fff; padding:10px 22px; border:0; border-radius:10px; cursor:pointer; }
+
+/* 地图点击区域与气泡 */
+.map-click-area { position: absolute; top: 25%; left: 18%; width: 15%; height: 18%; cursor: pointer; z-index: 10; }
+.canada-bubble { position: absolute; top: 20%; left: 25%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+.bubble-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.bubble-header .flag { font-size: 18px; }
+.bubble-header .country { font-weight: 600; font-size: 16px; color: #333; }
+.bubble-data { display: flex; gap: 16px; }
+.data-item { display: flex; align-items: center; gap: 6px; }
+.data-item .icon { font-size: 16px; }
+.data-item .value { font-weight: 600; color: #333; }
+.bubble-close { position: absolute; top: 8px; right: 8px; background: #f0f0f0; border: 0; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; color: #666; }
