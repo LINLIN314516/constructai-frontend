@@ -267,3 +267,305 @@ button:focus-visible {
 .data-item .icon { font-size: 16px; }
 .data-item .value { font-weight: 600; color: #333; }
 .bubble-close { position: absolute; top: 8px; right: 8px; background: #f0f0f0; border: 0; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; color: #666; }
+
+
+
+/* 整体容器 */
+.admin-menu {
+  padding: 24px 16px;
+}
+
+/* 标题区：居中 */
+.admin-hero {
+  text-align: center;
+  margin: 16px auto 24px;
+}
+.admin-hero-title {           /* 中号 */
+  font-size: 32px;            /* 可按需调：26~32 都可 */
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+.admin-hero-subtitle {        /* 小号 */
+  font-size: 16px;
+  color: #555;
+}
+
+
+
+/* 卡片区：一排三等分并整体居中 */
+.admin-cards {
+  max-width: 980px;           /* 控制整排宽度，居中更像原稿 */
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* 单卡片 */
+.admin-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px 10px 26px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.admin-card:hover {
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  transform: translateY(-1px);
+}
+.admin-card-title {
+  font-size: 16px;            /* 标题比副标题略大 */
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 10px;        /* 标题在上，图标在下 */
+}
+
+/* 自适应：窄屏时 2 列/1 列 */
+@media (max-width: 960px) {
+  .admin-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .admin-cards { grid-template-columns: 1fr; }
+}
+
+
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:8px 16px; border-bottom:1px solid #eee; background:#fff; }
+.topbar-right { display:flex; gap:12px; align-items:center; margin-left:auto; }
+
+.nav-group-title { font-size:10px; letter-spacing:.08em; text-transform:uppercase; opacity:.6; padding:8px 12px 4px; }
+.nav-item { display:block; padding:8px 12px; border-radius:8px; color:#fff; opacity:.85; }
+.nav-item:hover { opacity:1; background:rgba(255,255,255,.08); }
+.nav-item-active { background:rgba(255,255,255,.14); opacity:1; }
+.nav-bullet { margin-right:8px; }
+
+
+
+/* ====== Import 区块 ====== */
+.admin-import {
+  padding: 16px;
+}
+.admin-import-card {
+  max-width: 780px;
+  margin: 20px auto 64px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+}
+.field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+.file-input {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 8px; /* 让文件名显示在下面 */
+}
+.file-name {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 14px;
+}
+.btn-primary {
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-primary:disabled { opacity: .6; cursor: default; }
+.import-msg { margin-top: 12px; font-size: 14px; }
+
+/* ====== 右下角 Back 浮动按钮 ====== */
+.admin-fab-back {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 30;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  cursor: pointer;
+}
+.admin-fab-back:hover {
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+
+
+
+
+/* ====== Frequency Analysis 页面（Admin--频率分析页面） ====== */
+.admin-analysis { padding: 16px; }
+
+.admin-analysis-grid {
+  max-width: 1100px;
+  margin: 16px auto 64px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 四等分 */
+  gap: 20px;
+}
+
+.admin-analysis-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px 16px 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.admin-analysis-card:hover {
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  transform: translateY(-1px);
+}
+
+.admin-analysis-title {
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+/* “次数 / 月” 行 */
+.admin-analysis-stat {
+  margin: 6px 0 14px;
+  color: #555;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.stat-number { font-size: 24px; font-weight: 700; color: #111; }
+.stat-unit   { font-size: 14px; color: #666; }
+
+/* 按钮外观（与 Import 页保持一致风格） */
+.btn-outline {
+  border: 1px solid #111;
+  background: #fff;
+  color: #111;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-outline:hover { background: #111; color: #fff; }
+
+/* 响应式：窄屏降为 2 列 / 1 列 */
+@media (max-width: 1024px) {
+  .admin-analysis-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .admin-analysis-grid { grid-template-columns: 1fr; }
+}
+/* ====== Frequency Analysis 页面（Admin--频率分析页面） 结束 ====== */
+
+
+
+
+/* 居中表单 */
+.admin-version-form {
+  max-width: 360px;
+  margin: 16px auto 80px;     /* 居中 */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+.select {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  outline: none;
+}
+.select:focus { border-color: #111; }
+
+.btn-primary {
+  border: 1px solid #111827;
+  background: #111827;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-primary:disabled { opacity: .6; cursor: default; }
+
+/* 让 Manage 居中并与下拉对齐在其下方 */
+.admin-version-manage {
+  justify-self: center;
+  margin-top: 6px;
+}
+
+.form-msg {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #111;
+}
+
+/* 右下角 Back to menu */
+.admin-fab-back {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+.admin-fab-back:hover { filter: brightness(1.05); }
+
+
+
+/* 登录页表单（居中，一列，等宽） */
+.admin-login { padding: 16px; }
+.admin-login-form {
+  max-width: 360px;          /* 控制输入框与按钮宽度 */
+  margin: 8px auto 80px;     /* 居中 */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.field-label { font-size: 14px; font-weight: 600; color:#111; }
+.input {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+.input:focus { border-color: #111; }
+
+/* 按钮：与输入框同宽 */
+.btn-primary {
+  border: 1px solid #111827;
+  background: #111827;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-primary:disabled { opacity: .6; cursor: default; }
+.btn-block { width: 100%; }
+
+.form-msg { font-size: 14px; margin-top: 2px; }
+.form-msg.error { color: #b91c1c; }

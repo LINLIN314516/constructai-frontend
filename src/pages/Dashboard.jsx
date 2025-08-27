@@ -65,10 +65,7 @@ export default function Dashboard() {
         <div>
           <div className="block-title">Regional Heatmap</div>
           <div className="map-box">
-            <div className="au-map">
-              <div className="vic"></div>
-              <div className="nsw"></div>
-            </div>
+            <img src="/images/AusMap.png" alt="Australia Map" className="map-img" />
           </div>
         </div>
         <div>
@@ -100,3 +97,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

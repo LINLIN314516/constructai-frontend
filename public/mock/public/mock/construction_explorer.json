@@ -1,0 +1,12 @@
+{
+    "roles":[
+      {"role":"Site Engineer","top_skills":["Computer Vision","NLP","Predictive Modelling"]},
+      {"role":"Planner","top_skills":["AI Ethics","Data Annotation","Reinforcement Learning"]},
+      {"role":"Technician","top_skills":["Python","Model Evaluation","AI Security"]}
+    ],
+    "regions":[
+      {"region":"Victoria","top_skills":["NLP","Computer Vision","Data Wrangling"]},
+      {"region":"NSW","top_skills":["Python","AI Ethics","Predictive Modelling"]}
+    ]
+  }
+  

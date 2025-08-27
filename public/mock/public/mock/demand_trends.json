@@ -1,0 +1,11 @@
+{
+    "raw": [
+      { "year": 2020, "NLP": 95,  "CV": 78,  "PA": 42 },
+      { "year": 2021, "NLP": 110, "CV": 96,  "PA": 55 },
+      { "year": 2022, "NLP": 150, "CV": 120, "PA": 62 },
+      { "year": 2023, "NLP": 165, "CV": 135, "PA": 73 },
+      { "year": 2024, "NLP": 180, "CV": 140, "PA": 68 }
+    ],
+    "summary": { "totalPosts": 14320, "skillsCount": 3, "yoy": 0.18, "estimate2025": 19000 }
+  }
+  
