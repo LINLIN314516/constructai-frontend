@@ -1,176 +1,184 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchInsights } from "../api/services/jobInsightsApi";
 
-/** 追踪的技能键（只画三条：NLP / CV / PA） */
-const SKILL_KEYS = [
-  { key: "NLP", label: "NLP" },
-  { key: "CV",  label: "Computer Vision" },
-  { key: "PA",  label: "Predictive Analytics" },
-];
-
-/** 主题色（会尊重你 index.css 的变量） */
+// 主题色
 const COLORS = {
-  primary: "var(--ca-primary, #5B5CE2)",
+  primary:   "var(--ca-primary, #5B5CE2)",
   secondary: "var(--ca-secondary, #6BC2FF)",
-  accent: "var(--ca-accent, #E35BBE)",
-  text: "var(--ca-text, #1F2340)",
-  subtext: "var(--ca-subtext, #6B7280)",
-  bg: "var(--ca-bg, #FFFFFF)",
-  card: "var(--ca-card, #F7F7FC)",
-  border: "var(--ca-border, #E5E7EB)"
+  accent:    "var(--ca-accent, #E35BBE)",
+  text:      "var(--ca-text, #1F2340)",
+  subtext:   "var(--ca-subtext, #6B7280)",
+  bg:        "var(--ca-bg, #FFFFFF)",
+  card:      "var(--ca-card, #F7F7FC)",
+  border:    "var(--ca-border, #E5E7EB)"
 };
 
-/** 生成折线路径 */
-function linePath(points, xScale, yScale) {
-  return points.map((p, i) => `${i === 0 ? "M" : "L"} ${xScale(p.x)},${yScale(p.y)}`).join(" ");
+const niceCeil = (n, step = 100) => Math.ceil(n / step) * step;
+const num = (x) => (Number.isFinite(Number(x)) ? Number(x) : 0);
+
+// 将后端返回的若干数组（TREND / DATE）合并为按日期的行，并动态收集技能列表
+function buildTrendTable(allRows) {
+  const byDate = new Map();
+  const skills = new Set();
+
+  for (const r of allRows || []) {
+    // 1) TREND 记录：PK = TREND#REGION#...#SKILL#<Skill>，SK = DATE#YYYY-MM-DD
+    if (r?.PK?.startsWith?.("TREND#")) {
+      const skill = r.PK.split("#")[4];
+      const date = (r.SK || "").replace("DATE#", "");
+      if (!skill || !date) continue;
+      skills.add(skill);
+      const rec = byDate.get(date) || { label: date };
+      rec[skill] = (rec[skill] || 0) + num(r.count);
+      byDate.set(date, rec);
+      continue;
+    }
+    // 2) DATE 记录：PK = DATE#YYYY-MM-DD，SK = COUNT#000480#SKILL#MLOps（兜底，把某天快照也并入）
+    if (r?.PK?.startsWith?.("DATE#")) {
+      const date = (r.PK || "").replace("DATE#", "");
+      const parts = (r.SK || "").split("#"); // COUNT#000480#SKILL#MLOps
+      const idx = parts.indexOf("SKILL");
+      const skill = idx >= 0 ? parts[idx + 1] : null;
+      if (!skill || !date) continue;
+      skills.add(skill);
+      const rec = byDate.get(date) || { label: date };
+      // 不覆盖已有 TREND 值；仅在 TREND 缺失时作为兜底
+      if (rec[skill] == null) rec[skill] = num(r.count);
+      byDate.set(date, rec);
+    }
+  }
+
+  const rows = [...byDate.values()].sort((a, b) => a.label.localeCompare(b.label));
+  return { rows, skills: [...skills] };
 }
 
-/** 解析后端数组 => { raw: [{label:'YYYY-MM-DD', NLP, CV, PA}, ...], summary } */
-function parseLambdaPayload(rows) {
-  const byDate = new Map(); // "YYYY-MM-DD" -> { label, NLP, CV, PA }
-
-  for (const r of rows || []) {
-    if (!r || typeof r.PK !== "string" || typeof r.SK !== "string") continue;
-    if (!r.PK.startsWith("TREND#")) continue;
-
-    const parts = r.PK.split("#");          // ["TREND","REGION","VIC","SKILL","Computer Vision"]
-    const skillName = parts[4];             // "NLP" | "Computer Vision" | "Predictive Analytics" | ...
-    const dateStr = r.SK.replace("DATE#", ""); // "2025-05-01"
-    if (!dateStr || !Number.isFinite(r.count)) continue;
-
-    let key = null;
-    if (skillName === "NLP") key = "NLP";
-    else if (skillName === "Computer Vision") key = "CV";
-    else if (skillName === "Predictive Analytics") key = "PA";
-    if (!key) continue; // 只保留我们要画的三种技能
-
-    const rec = byDate.get(dateStr) || { label: dateStr, NLP: 0, CV: 0, PA: 0 };
-    rec[key] += Number(r.count) || 0; // 日级累加
-    byDate.set(dateStr, rec);
-  }
-
-  // 按日期升序
-  const raw = Array.from(byDate.values()).sort((a, b) => a.label.localeCompare(b.label));
-
-  // 简单 summary：取最后一天总量 + 给一个估算值
-  let totalPosts = 0, yoy = 0, estimate = 0;
-  if (raw.length) {
-    const last = raw[raw.length - 1];
-    const lastSum = (last.NLP || 0) + (last.CV || 0) + (last.PA || 0);
-    totalPosts = lastSum;
-    estimate = Math.round(lastSum * 1.18); // 没有前一天对比，就按 18% 做一个演示估算
-  }
-
-  return {
-    raw,
-    summary: {
-      totalPosts: Math.round(totalPosts),
-      skillsCount: SKILL_KEYS.length,
-      yoy,
-      estimate2025: estimate
-    }
-  };
+// 生成折线路径
+function linePath(points, xScale, yScale) {
+  return points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${xScale(p.x)},${yScale(p.y)}`)
+    .join(" ");
 }
 
 export default function Trends() {
   const navigate = useNavigate();
 
-  // —— 状态（仅用后端，不再保留静态回退）——
-  const [raw, setRaw] = useState([]);           // [{label, NLP, CV, PA}...]
-  const [summary, setSummary] = useState(null); // { totalPosts, skillsCount, yoy, estimate2025 }
+  // 页面状态
+  const [rows, setRows] = useState([]);          // [{ label, <skillA>, <skillB>... }]
+  const [skillKeys, setSkillKeys] = useState([]); // ["NLP","Computer Vision","MLOps",...]
+  const [enabled, setEnabled] = useState([]);     // 当前显示哪些技能
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dataSource] = useState("backend");
+  const dataSource = "backend";
+
+  // 可改成来自 UI 的筛选
+  const REGION = "VIC";
+  const DEFAULT_WATCH = ["NLP", "Computer Vision", "MLOps"]; // 想重点保证出现的技能
 
   useEffect(() => {
-    const API_URL = "/api?region=VIC"; // 通过 Vite 代理，避免 CORS
     let aborted = false;
-
     (async () => {
       try {
         setLoading(true);
         setError(null);
-        const r = await fetch(API_URL, { credentials: "omit" });
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const data = await r.json();
-        const parsed = parseLambdaPayload(data);
-        if (!parsed.raw.length) throw new Error("No TREND rows");
+
+        // 1) 先拉该地区整体（可能缺少部分技能的 TREND）
+        const base = fetchInsights({ region: REGION });
+
+        // 2) 再并行按技能补齐（保证 MLOps 之类也有 TREND）
+        const skillReqs = DEFAULT_WATCH.map((s) => fetchInsights({ region: REGION, skill: s }));
+
+        const results = await Promise.allSettled([base, ...skillReqs]);
+        const all = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+
+        const { rows: chartRows, skills } = buildTrendTable(all);
         if (!aborted) {
-          setRaw(parsed.raw);
-          setSummary(parsed.summary);
+          if (!chartRows.length) throw new Error("No TREND/DATE rows to build trend.");
+          setRows(chartRows);
+
+          // 动态技能：数据里有哪些就展示哪些
+          const uniqueSkills = skills.length ? skills : DEFAULT_WATCH;
+          setSkillKeys(uniqueSkills);
+          setEnabled(uniqueSkills); // 默认全开
+
+          // 顶部 KPI：取最后一天的总量
+          const last = chartRows[chartRows.length - 1];
+          const lastSum = uniqueSkills.reduce((acc, k) => acc + (last[k] || 0), 0);
+          setSummary({
+            totalPosts: Math.round(lastSum),
+            skillsCount: uniqueSkills.length,
+            yoy: 0, // 没有去年同日基线时先置 0
+            estimate2025: Math.round(lastSum * 1.18),
+          });
         }
       } catch (e) {
-        if (!aborted) setError(e?.message || "Failed to fetch");
+        if (!aborted) setError(e?.message || "Failed to fetch backend data");
       } finally {
         if (!aborted) setLoading(false);
       }
     })();
-
     return () => { aborted = true; };
   }, []);
 
-  // —— 导出/打印菜单（保持你的逻辑）——
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-  useEffect(() => {
-    function onDocClick(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-    }
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
-  }, []);
-
-  const [enabled, setEnabled] = useState(["NLP", "CV", "PA"]);
-
-  // ====== 画布与坐标 ======
+  // ====== 图表布局与坐标 ======
   const W = 760, H = 280;
   const PAD = { l: 52, r: 16, t: 20, b: 36 };
   const innerW = W - PAD.l - PAD.r;
   const innerH = H - PAD.t - PAD.b;
 
-  // X 轴使用“日期标签”
-  const labels = raw.map(d => d.label); // ["2025-05-01","2025-05-02",...]
+  const labels = rows.map(d => d.label);
   const xScale = (label) => {
     const i = labels.indexOf(label);
-    const step = innerW / Math.max(1, (labels.length - 1));
+    const step = innerW / Math.max(1, labels.length - 1);
     return PAD.l + i * step;
   };
 
-  // Y 轴动态范围
-  const values = raw.flatMap(d => [d.NLP || 0, d.CV || 0, d.PA || 0]);
-  const dataMax = values.length ? Math.max(...values) : 200;
-  const niceCeil = (n, step = 100) => Math.ceil(n / step) * step;
+  const allVals = rows.flatMap(d => skillKeys.map(k => d[k] || 0));
+  const dataMax = allVals.length ? Math.max(...allVals) : 200;
   const minY = 0;
   const maxY = niceCeil(dataMax * 1.1, dataMax > 1000 ? 500 : 100);
   const yTicks = Array.from({ length: 6 }, (_, i) => Math.round((maxY / 5) * i));
   const yScale = (y) => {
-    const yNorm = (y - minY) / (maxY - minY);
+    const yNorm = (y - minY) / (maxY - minY || 1);
     return PAD.t + innerH - innerH * yNorm;
   };
 
-  // 折线数据
+  // 计算折线序列（颜色循环）
   const series = useMemo(() => {
-    return SKILL_KEYS
-      .filter(s => enabled.includes(s.key))
-      .map((s, idx) => {
-        const color = [COLORS.primary, COLORS.secondary, COLORS.accent][idx];
-        const pts = raw.map(d => ({ x: d.label, y: d[s.key] ?? 0 })); // 关键：x 用 label
-        return { id: s.key, label: s.label, color, pts };
+    const palette = [COLORS.primary, COLORS.secondary, COLORS.accent];
+    return skillKeys
+      .filter((k) => enabled.includes(k))
+      .map((k, idx) => {
+        const color = palette[idx % palette.length];
+        const pts = rows.map((d) => ({ x: d.label, y: d[k] ?? 0 }));
+        return { id: k, label: k, color, pts };
       });
-  }, [enabled, raw]);
+  }, [enabled, rows, skillKeys]);
 
+  // 交互：显隐某条线
   const toggle = (key) => {
     setEnabled(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
   };
 
-  const onExport = () => {
-    navigate("/export-trends", { state: { from: "trends", labels, enabled } });
-  };
-  const onPrint = () => window.print();
+  // 导出 / 打印
+  const onExport = () => navigate("/export-trends", { state: { from: "trends", labels, enabled } });
+  const onPrint  = () => window.print();
+
+  // 导出菜单
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
 
   return (
     <div style={{ padding: "24px 28px", color: COLORS.text }}>
-      {/* 顶部：数据来源 + 加载/错误提示 */}
+      {/* 顶部：数据来源 / loading / 错误提示 */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
         <span style={{
           padding: "4px 8px", borderRadius: 8, fontSize: 12,
@@ -179,7 +187,7 @@ export default function Trends() {
           data: {dataSource}
         </span>
         {loading && <span style={{ fontSize: 12, color: COLORS.subtext }}>Loading backend…</span>}
-        {error && <span style={{ fontSize: 12, color: "#b4232c" }}>Error: {error}</span>}
+        {error   && <span style={{ fontSize: 12, color: "#b4232c" }}>Error: {error}</span>}
       </div>
 
       <div style={{ marginBottom: 12 }}>
@@ -188,6 +196,7 @@ export default function Trends() {
         </span>
       </div>
 
+      {/* 标题 + 导出菜单 */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>AI Skill Demand Trend</h1>
 
@@ -233,31 +242,40 @@ export default function Trends() {
       </div>
 
       {/* 空态 */}
-      {!loading && (!raw.length || !summary) && (
+      {!loading && (!rows.length || !summary) && (
         <div style={{
           background: "#fff5f5", border: "1px dashed #f2b8b8",
           borderRadius: 12, padding: 16, color: "#8a1c1c", marginBottom: 16
         }}>
-          后端数据未加载成功，请检查 Lambda URL 或 CORS 设置。
+          Backend data not loaded. Please check Lambda URL / CORS.
         </div>
       )}
 
-      {/* 有数据才渲染卡片与图表 */}
-      {raw.length > 0 && summary && (
+      {/* 有数据才渲染 */}
+      {rows.length > 0 && summary && (
         <>
+          {/* 顶部 KPI */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12, marginBottom: 16 }}>
             <InfoCard title="Total AI-related Job Posts" value={Math.round(summary.totalPosts).toLocaleString()} />
-            <InfoCard title={`${SKILL_KEYS.length} skills`} value={`${SKILL_KEYS.length} skills`} caption="Shown" />
+            <InfoCard title={`${skillKeys.length} skills`} value={`${skillKeys.length} skills`} caption="Shown" />
             <InfoCard title="YoY" value={`+${Math.round((summary.yoy || 0) * 100)}%`} caption="Year-over-year" />
             <InfoCard title="2025 Estimated" value={`${Math.round(summary.estimate2025 || 0).toLocaleString()} job posts`} />
           </div>
 
+          {/* 图例 */}
           <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 8 }}>
-            <LegendPill active={enabled.includes("NLP")} color={COLORS.primary} label="NLP" onClick={() => toggle("NLP")} />
-            <LegendPill active={enabled.includes("CV")}  color={COLORS.secondary} label="Computer Vision" onClick={() => toggle("CV")} />
-            <LegendPill active={enabled.includes("PA")}  color={COLORS.accent} label="Predictive Analytics" onClick={() => toggle("PA")} />
+            {skillKeys.map((key, idx) => (
+              <LegendPill
+                key={key}
+                active={enabled.includes(key)}
+                color={[COLORS.primary, COLORS.secondary, COLORS.accent][idx % 3]}
+                label={key}
+                onClick={() => toggle(key)}
+              />
+            ))}
           </div>
 
+          {/* 折线图 */}
           <div style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 14, padding: 12 }}>
             <svg width={W} height={H} role="img" aria-label="AI skill demand line chart">
               {yTicks.map((v) => (
@@ -266,18 +284,16 @@ export default function Trends() {
                   <text x={PAD.l - 10} y={yScale(v) + 4} textAnchor="end" fontSize="11" fill={COLORS.subtext}>{v}</text>
                 </g>
               ))}
-
               {labels.map((lbl) => (
                 <g key={lbl}>
                   <text x={xScale(lbl)} y={H - 10} textAnchor="middle" fontSize="11" fill={COLORS.subtext}>{lbl}</text>
                 </g>
               ))}
-
               <text x={PAD.l} y={PAD.t - 4} fontSize="12" fill={COLORS.subtext}>Job posts</text>
 
               {series.map(s => (
                 <g key={s.id}>
-                  <path d={linePath(s.pts.map(p => ({ x: p.x, y: p.y })), xScale, yScale)} fill="none" stroke={s.color} strokeWidth="3" />
+                  <path d={linePath(s.pts, xScale, yScale)} fill="none" stroke={s.color} strokeWidth="3" />
                   {s.pts.map(p => (
                     <circle key={`${s.id}-${p.x}`} cx={xScale(p.x)} cy={yScale(p.y)} r="4" fill={s.color} />
                   ))}
@@ -286,7 +302,7 @@ export default function Trends() {
             </svg>
 
             <div style={{ marginTop: 8, fontSize: 13, color: COLORS.subtext }}>
-              <strong>Insight</strong> — NLP increased steadily; CV plateaued; PA is lower but trending upward.
+              <strong>Insight</strong> — Trends reflect daily job-post counts for {REGION}. Change REGION or aggregate multiple regions to alter scope.
             </div>
           </div>
         </>
@@ -295,7 +311,6 @@ export default function Trends() {
   );
 }
 
-/** 小卡片 */
 function InfoCard({ title, value, caption }) {
   return (
     <div style={{ background: COLORS.card, borderRadius: 12, padding: "12px 14px", border: `1px solid ${COLORS.border}` }}>
@@ -306,15 +321,22 @@ function InfoCard({ title, value, caption }) {
   );
 }
 
-/** 图例 pill */
 function LegendPill({ active, color, label, onClick }) {
   return (
-    <button onClick={onClick} aria-pressed={active}
-      style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 999,
-               border: `1px solid ${active ? color : COLORS.border}`, background: active ? "rgba(0,0,0,0.02)" : "#fff", cursor: "pointer" }}>
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 10px",
+        borderRadius: 999, border: `1px solid ${active ? color : COLORS.border}`,
+        background: active ? "rgba(0,0,0,0.02)" : "#fff", cursor: "pointer"
+      }}
+    >
       <span style={{ width: 10, height: 10, borderRadius: 999, background: color, boxShadow: active ? `0 0 0 3px ${color}22` : "none" }} />
       <span style={{ fontSize: 12 }}>{label}</span>
     </button>
   );
 }
+
+
 
