@@ -14,7 +14,7 @@ export default function AdminLogin() {
     setPending(true);
 
     try {
-      // —— 临时硬校验（验收用）——
+      // —— test_use ——
       const OK_USER = "Admin";
       const OK_PASS = "1234";
 
@@ -22,7 +22,7 @@ export default function AdminLogin() {
         throw new Error("Invalid credentials");
       }
 
-      // 写入本地登录态（与你的守卫保持一致）
+      // 写入本地登录态（same with guard）
       localStorage.setItem("admin_token", "demo_token");
       localStorage.setItem("admin_name", "admin");
 

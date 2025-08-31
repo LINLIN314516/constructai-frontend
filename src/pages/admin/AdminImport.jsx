@@ -15,7 +15,7 @@ export default function AdminImport() {
     setPending(true);
     setMessage("");
     try {
-      // TODO: 接后端导入接口
+      // TODO: get backend in here().
       // const fd = new FormData();
       // fd.append("file", file);
       // const res = await fetch("/api/admin/datasets/import", {

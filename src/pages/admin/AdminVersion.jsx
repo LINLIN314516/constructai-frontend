@@ -23,7 +23,7 @@ export default function AdminVersion() {
     setPending(true);
     setMessage("");
     try {
-      // TODO：接后端回滚接口
+      // TODO：get in the backend
       // await fetch("/api/admin/version/rollback", {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("admin_token")}` },
@@ -41,13 +41,13 @@ export default function AdminVersion() {
 
   return (
     <div className="admin-version">
-      {/* 顶部两行标题（与其他 Admin 页一致） */}
+      {/* title */}
       <div className="admin-hero">
         <h1 className="admin-hero-title">Construct AI Skills Analyser</h1>
         <div className="admin-hero-subtitle">Administrator Console — Version Control</div>
       </div>
 
-      {/* 居中表单区 */}
+      {/* html */}
       <div className="admin-version-form">
         <label htmlFor="versionSelect" className="field-label">Label</label>
 
@@ -74,7 +74,7 @@ export default function AdminVersion() {
         {message && <div className="form-msg">{message}</div>}
       </div>
 
-      {/* 右下角返回 */}
+      {/* BACK BUTTON */}
       <button
         type="button"
         className="admin-fab-back"

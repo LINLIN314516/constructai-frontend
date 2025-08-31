@@ -71,7 +71,7 @@ const router = createBrowserRouter([
        { path: "login", element: <LoginGate /> },
        { path: "admin/login", element: <Navigate to="/login" replace /> },
 
-      // ✅ 兼容旧链接（侧边栏/书签可能还指向这些老地址）
+      // 兼容旧链接（侧边栏/书签可能还指向这些老地址）
       { path: "admin-home", element: <Navigate to="/admin" replace /> },
       { path: "data-importing", element: <Navigate to="/admin/import" replace /> },
       { path: "frequency-analysis", element: <Navigate to="/admin/analysis" replace /> },

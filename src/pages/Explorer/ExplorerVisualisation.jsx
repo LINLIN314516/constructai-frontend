@@ -15,7 +15,7 @@ const COUNTRIES = [
   { id: "de",  label: "Germany" },
 ];
 
-// 假数据（Sprint1）：role -> country -> { nlp, cv, ethics }
+// false data_test only（Sprint1）：role -> country -> { nlp, cv, ethics }
 const DATA = {
   "site-eng": {
     au:  { nlp: 520, cv: 460, ethics: 410 },
@@ -56,7 +56,7 @@ export default function ExplorerVisualisation() {
   const { type, id } = useParams(); // e.g. /explorer/visualisation/role/:id  或  /visualisation/skill/:id
   const nav = useNavigate();
 
-  // 如果从 rank-role 进来，type=role，id=角色；从 rank-skill 进来时我们也默认给个角色
+  // 如果从 rank-role 进来，type=role，id=角色；从 rank-skill 进来时设置也默认给个角色
   const initialRole = type === "role" ? id : "site-eng";
   const [role, setRole] = useState(initialRole);
 

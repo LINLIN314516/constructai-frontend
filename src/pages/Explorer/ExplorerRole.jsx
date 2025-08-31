@@ -2,7 +2,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 //新增：
-// 对应 HiFi 里的 Top 8 Roles，id 与你的卡片跳转保持一致
+// 对应 HiFi 里的 Top 8 Roles，id 与卡片跳转保持一致
 const ROLES = [
     { id: "site-eng", label: "Site Engineer" },
     { id: "bim-coord", label: "BIM Coordinator" },

@@ -11,13 +11,13 @@ export default function AdminAnalysis() {
   const navigate = useNavigate();
 
   function optimise(moduleKey) {
-    // TODO: 接后端 POST /api/admin/optimise { module: moduleKey }
+    // TODO: get backend POST /api/admin/optimise { module: moduleKey }
     alert(`Optimisation for ${moduleKey} triggered`);
   }
 
   return (
     <div className="admin-analysis">
-      {/* 顶部两行标题（与 AdminMenu / Import 一致） */}
+      {/* title（与 AdminMenu / Import 一致） */}
       <div className="admin-hero">
         <h1 className="admin-hero-title">Construct AI Skills Analyser</h1>
         <div className="admin-hero-subtitle">
@@ -25,7 +25,7 @@ export default function AdminAnalysis() {
         </div>
       </div>
 
-      {/* 四等分卡片 */}
+      {/* card 1/4 */}
       <div className="admin-analysis-grid">
         {MODULES.map((m) => (
           <div key={m.key} className="admin-analysis-card">

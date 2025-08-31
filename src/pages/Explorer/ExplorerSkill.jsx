@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-// 可按需增删，id 要和你的路由一致
+// 可按需增删，id 和路由一致
 const SKILLS = [
     { id: "nlp",   label: "NLP" },
     { id: "cv",    label: "Computer Vision" },
@@ -75,7 +75,7 @@ export default function ExplorerSkill() {
         </table>
       </div>
 
-       {/* 4 张信息卡（静态占位，符合 HiFi） */}
+       {/* card） */}
        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginTop: 12 }}>
         <InfoCard title="High Demand"       value="482 job posts in Victoria" />
         <InfoCard title="Strong Growth"     value="+12% increase since 2023" />
@@ -83,7 +83,7 @@ export default function ExplorerSkill() {
         <InfoCard title="Avg Salary"        value="$90K" />
       </div>
 
-      {/* Source 标注 */}
+      {/* Source  */}
       <div style={{ marginTop: 12, fontSize: 12, color: "#6B7280", textAlign: "right" }}>
         Source: <em>Construction AI Skill Analyzer (2025)</em>
        </div>

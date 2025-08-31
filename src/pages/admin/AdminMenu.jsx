@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-// —— 内联黑色图标，避免装依赖 ——
+// —— Black Icon ——
 function AnchorIcon() {
   return (
     <svg viewBox="0 0 24 24" width="88" height="88" fill="none" stroke="#111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -40,13 +40,13 @@ function Card({ to, title, Icon }) {
 export default function AdminMenu() {
   return (
     <div className="admin-menu">
-      {/* 居中标题区 */}
+      {/* title in middle */}
       <div className="admin-hero">
         <h1 className="admin-hero-title">Construct AI Skills Analyser</h1>
         <div className="admin-hero-subtitle">Administrator Console — Select the Function</div>
       </div>
 
-      {/* 中间三张卡片，一排居中 */}
+      {/* card 1/3 */}
       <div className="admin-cards">
         <Card to="/admin/import"  title="Data Importing"      Icon={AnchorIcon}   />
         <Card to="/admin/analysis" title="Frequency Analysis" Icon={ApertureIcon} />
