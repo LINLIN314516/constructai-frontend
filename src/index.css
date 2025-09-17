@@ -270,19 +270,19 @@ button:focus-visible {
 
 /* 地图点击区域与气泡 */
 .map-click-area { position: absolute; top: 25%; left: 18%; width: 15%; height: 18%; cursor: pointer; z-index: 10; }
-.canada-area { top: 27%; left: 30%; width: 12%; height: 12%; }
+.canada-area { top: 35%; left: 32%; width: 12%; height: 12%;  }
 /* .canada-area { background: rgba(168, 149, 147, 0.958); border: 1px dashed #160b5b; border-radius: 6px; } */
-.usa-area { top: 39%; left: 27.5%; width: 12%; height: 9%; }
+.usa-area { top: 44.5%; left: 32%; width: 12%; height: 9%; }
 /* .usa-area { background: rgba(168, 149, 147, 0.958); border: 1px dashed #160b5b; border-radius: 6px; } */
-.brazil-area { top: 59%; left: 39%; width: 9%; height: 12%; }
+.brazil-area { top: 65%; left: 41%; width: 9%; height: 12%; }
 /* .brazil-area { background: rgba(168, 149, 147, 0.958); border: 1px dashed #160b5b; border-radius: 6px; } */
-.spain-area { top: 42.5%; left: 52.7%; width: 2.5%; height: 4.5%; }
+.spain-area { top: 46%; left: 55%; width: 2.5%; height: 4.5%; }
 /* .australia-area { background: rgba(168, 149, 147, 0.958); border: 1px dashed #160b5b; border-radius: 6px; } */
-.uk-area { top: 38%; left: 53.8%; width: 1.8%; height: 3.2%;}
-.china-area { top: 40%; left: 75%; width: 10%; height: 10%;}
-.india-area { top: 47%; left: 70%; width: 6%; height: 8%;}
-.australia-area { top: 70%; left: 81%; width: 8%; height: 9%; }
-.russia-area { top: 28%; left: 61%; width: 26%; height: 10%; }
+.uk-area { top: 41%; left: 56%; width: 1.8%; height: 3.2%;}
+.china-area { top: 45%; left: 73%; width: 10%; height: 10%; }
+.india-area { top: 54%; left: 70%; width: 6%; height: 8%; }
+.australia-area { top: 73%; left: 81%; width: 8%; height: 9%; }
+.russia-area { top: 35%; left: 61%; width: 26%; height: 10%; }
 .canada-bubble { position: absolute; top: 22%; left: 30%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
 .usa-bubble { position: absolute; top: 34%; left: 20%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
 .brazil-bubble { position: absolute; top: 58%; left: 26%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
@@ -301,6 +301,44 @@ button:focus-visible {
 .bubble-actions { display:flex; justify-content:flex-end; padding:10px 14px 14px; gap: 8px; }
 .country-view-btn { background: #fff; color: #333; border: 1px solid #e0e0e0; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; }
 .bubble-close { position: absolute; top: 8px; right: 8px; background: #f0f0f0; border: 0; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; color: #666; display:flex; align-items:center; justify-content:center; line-height: 1; padding:0; font-size:12px; }
+
+/* Regional Insights 页面专用点击区域和气泡 */
+.insights-click-area { position: absolute; cursor: pointer; z-index: 10; }
+.insights-canada-area { top: 25%; left: 18%; width: 15%; height: 14%; }
+.insights-usa-area { top: 38%; left: 20%; width: 12%; height: 10%; }
+.insights-brazil-area { top: 53%; left: 29%; width: 10%; height: 12%; }
+.insights-india-area { top: 43%; left: 65%; width: 8%; height: 10%; }
+.insights-australia-area { top: 58%; left: 76%; width: 10%; height: 10%; }
+
+/* Regional Insights 页面专用气泡样式 */
+.insights-canada-bubble { position: absolute; top: 20%; left: 25%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+.insights-usa-bubble { position: absolute; top: 30%; left: 15%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+.insights-brazil-bubble { position: absolute; top: 55%; left: 30%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+.insights-india-bubble { position: absolute; top: 45%; left: 65%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+.insights-australia-bubble { position: absolute; top: 70%; left: 75%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; min-width: 180px; }
+
+/* 澳大利亚州点击区域和气泡样式 */
+.aus-click-area { position: absolute; cursor: pointer; z-index: 10;}
+.aus-victoria-area { top: 105%; left: 65%; width: 15%; height: 8%; }
+.aus-nsw-area { top: 85%; left: 64%; width: 20%; height: 20%; }
+.aus-queensland-area { top: 25%; left: 62%; width: 25%; height: 52%; }
+.aus-south-australia-area { top: 71%; left: 44%; width: 20%; height: 43%; }
+.aus-western-australia-area { top: 36%; left: 22%; width: 25%; height: 60%; }
+.aus-tasmania-area { top: 118%; left: 68%; width: 10%; height:13%; }
+.aus-northern-territory-area { top: 25%; left: 47%; width: 15%; height: 47%; }
+
+/* 澳大利亚州气泡样式 */
+.aus-victoria-bubble { position: absolute; top: 60%; left: 45%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-nsw-bubble { position: absolute; top: 55%; left: 50%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-queensland-bubble { position: absolute; top: 30%; left: 55%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-southAustralia-bubble { position: absolute; top: 71%; left: 42%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-westernAustralia-bubble { position: absolute; top: 38%; left: 18%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-tasmania-bubble { position: absolute; top: 75%; left: 55%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+.aus-northernTerritory-bubble { position: absolute; top: 25%; left: 43%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0; box-shadow: 0 8px 28px rgba(0,0,0,0.18); z-index: 20; min-width: 260px; overflow: hidden; }
+
+/* 视图切换按钮样式 */
+.view-toggle { display: flex; gap: 8px; }
+.pill-active { background: #5a4bb6; color: #fff; }
 
 /* 整体容器 */
 .admin-menu {
