@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  // 点击澳洲地图跳转到 Heatmap 澳大利亚详细页面（3 Months 模式）
+  const handleAustraliaMapClick = () => {
+    // 跳转到 Heatmap 页面，并设置为澳大利亚视图和 3 Months 模式
+    navigate('/heatmap?view=australia&timeSlot=3Months');
+  };
+
   // 需求趋势（两条线，主线与参考线）
   const trendData = [
     { month: 1, main: 30, ref: 18 },
@@ -64,7 +73,7 @@ export default function Dashboard() {
       <div className="dash-row">
         <div>
           <div className="block-title">Regional Heatmap</div>
-          <div className="map-box">
+          <div className="map-box" onClick={handleAustraliaMapClick} style={{ cursor: 'pointer' }}>
             <img src="/images/AusMap.png" alt="Australia Map" className="map-img" />
           </div>
         </div>
