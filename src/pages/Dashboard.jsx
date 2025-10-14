@@ -240,7 +240,7 @@ export default function Dashboard() {
               </svg>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '348px', color: '#6B7280' }}>
-                暂无数据
+                No data yet.
               </div>
             )}
           </div>
