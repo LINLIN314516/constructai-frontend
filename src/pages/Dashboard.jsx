@@ -260,7 +260,7 @@ export default function Dashboard() {
               </div>
             ))
           ) : (
-            <div style={{ color: '#6B7280', padding: '12px' }}>暂无数据</div>
+            <div style={{ color: '#6B7280', padding: '12px' }}>No data yet.</div>
           )}
         </div>
       </section>
