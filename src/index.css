@@ -174,7 +174,8 @@ h1 {
 .dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 24px; align-items: stretch; }
 .block-title { font-size: 16px; color: #333; font-weight: 600; margin: 18px 0; }
 
-.map-box { height: 360px; background: #f7f7fb; border: 1px solid #eeeef8; border-radius: 16px; display:flex; align-items:center; justify-content:center; }
+.map-box { height: 360px; background: #f7f7fb; border: 1px solid #eeeef8; border-radius: 16px; display:flex; align-items:center; justify-content:center; overflow: hidden; }
+.map-img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .au-map { width: 320px; height: 210px; background:#e9efff; border:2px solid #6a67d8; border-radius: 20px 40px 30px 15px; position: relative; }
 .au-map .vic { position:absolute; bottom:18px; right:26px; width:32px; height:22px; background:#4a3fc6; border-radius:4px; }
 .au-map .nsw { position:absolute; top:34px; right:20px; width:34px; height:38px; background:#a7a4ef; border-radius:6px; }
@@ -319,12 +320,12 @@ button:focus-visible {
 
 /* 澳大利亚州点击区域和气泡样式 */
 .aus-click-area { position: absolute; cursor: pointer; z-index: 10;}
-.aus-victoria-area { top: 105%; left: 65%; width: 15%; height: 8%; }
-.aus-nsw-area { top: 85%; left: 64%; width: 20%; height: 20%; }
-.aus-queensland-area { top: 25%; left: 62%; width: 25%; height: 52%; }
-.aus-south-australia-area { top: 71%; left: 44%; width: 20%; height: 43%; }
-.aus-western-australia-area { top: 36%; left: 22%; width: 25%; height: 60%; }
-.aus-tasmania-area { top: 118%; left: 68%; width: 10%; height:13%; }
+.aus-victoria-area { top: 115%; left: 66.5%; width: 15%; height: 8%; }
+.aus-nsw-area { top: 90%; left: 66.5%; width: 20%; height: 20%; }
+.aus-queensland-area { top: 35%; left: 66.5%; width: 25%; height: 52%; }
+.aus-south-australia-area { top: 77.5%; left: 46.5%; width: 20%; height: 43%; }
+.aus-western-australia-area { top: 36%; left: 22%; width: 25%; height: 70%; }
+.aus-tasmania-area { top: 130%; left: 70%; width: 10%; height:13%; }
 .aus-northern-territory-area { top: 25%; left: 47%; width: 15%; height: 47%; }
 
 /* 澳大利亚州气泡样式 */
