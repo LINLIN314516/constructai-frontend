@@ -99,8 +99,8 @@ export default function Dashboard() {
   const skillColors = ["#3a2fb1", "#6BC2FF", "#E35BBE", "#10B981", "#F59E0B", "#EF4444"];
 
   // ====== 条形图布局与坐标 ======
-  const W = 500, H = 220;
-  const PAD = { l: 80, r: 16, t: 20, b: 8 }; // 减少底部边距
+  const W = 500, H = 348; // 增加高度以填充整个卡片 (360px - 12px padding)
+  const PAD = { l: 80, r: 16, t: 20, b: 20 };
   const innerW = W - PAD.l - PAD.r;
   const innerH = H - PAD.t - PAD.b;
 
@@ -113,7 +113,7 @@ export default function Dashboard() {
   // 优化条形分布，使其更均匀地填充空间
   const totalBars = topSkills.length;
   const availableHeight = innerH;
-  const barHeight = Math.min(availableHeight / totalBars * 0.8, 20); // 使用80%的空间，最大20px
+  const barHeight = Math.min(availableHeight / totalBars * 0.75, 28); // 使用75%的空间，最大28px
   const totalBarHeight = totalBars * barHeight;
   const remainingSpace = availableHeight - totalBarHeight;
   const barSpacing = remainingSpace / (totalBars + 1);
@@ -239,7 +239,7 @@ export default function Dashboard() {
 
               </svg>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '220px', color: '#6B7280' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '348px', color: '#6B7280' }}>
                 暂无数据
               </div>
             )}
