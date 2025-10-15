@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE = "https://73fgxcxzz9.execute-api.ap-southeast-2.amazonaws.com";
@@ -99,7 +99,27 @@ export default function Dashboard() {
   const skillColors = ["#3a2fb1", "#6BC2FF", "#E35BBE", "#10B981", "#F59E0B", "#EF4444"];
 
   // ====== 条形图布局与坐标 ======
-  const W = 500, H = 348; // 增加高度以填充整个卡片 (360px - 12px padding)
+  // 使用响应式宽度，让图表横向铺满整个卡片
+  const chartContainerRef = useRef(null);
+  const [chartDimensions, setChartDimensions] = useState({ width: 500, height: 348 });
+  
+  // 监听容器大小变化
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartContainerRef.current) {
+        const containerWidth = chartContainerRef.current.offsetWidth;
+        const width = Math.max(400, containerWidth - 32); // 减去padding
+        const height = 348;
+        setChartDimensions({ width, height });
+      }
+    };
+    
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+  
+  const { width: W, height: H } = chartDimensions;
   const PAD = { l: 80, r: 16, t: 20, b: 20 };
   const innerW = W - PAD.l - PAD.r;
   const innerH = H - PAD.t - PAD.b;
@@ -177,9 +197,9 @@ export default function Dashboard() {
         </div>
         <div>
           <div className="block-title">Top 10 Most Demand AI/ML Skills</div>
-          <div className="chart-box">
+          <div className="chart-box" ref={chartContainerRef}>
             {topSkills.length > 0 ? (
-              <svg width={W} height={H} role="img" aria-label="Top 10 AI/ML Skills bar chart">
+              <svg width={W} height={H} role="img" aria-label="Top 10 AI/ML Skills bar chart" style={{ width: '100%', height: 'auto' }}>
                 {/* 背景网格线 */}
                 {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => {
                   const x = PAD.l + ratio * innerW;

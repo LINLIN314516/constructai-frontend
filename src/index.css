@@ -171,7 +171,25 @@ h1 {
 .km-icon.up { color: #3a2fb1; }
 .km-text { font-weight: 700; font-size: 20px; color: #222; }
 
-.dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 24px; align-items: stretch; }
+.dash-row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 32px; 
+  margin-top: 24px; 
+  align-items: stretch; 
+}
+
+/* 响应式设计：在小屏幕上堆叠布局 */
+@media (max-width: 768px) {
+  .dash-row { 
+    grid-template-columns: 1fr; 
+    gap: 24px; 
+  }
+  
+  .chart-box { 
+    height: 300px; 
+  }
+}
 .block-title { font-size: 16px; color: #333; font-weight: 600; margin: 18px 0; }
 
 .map-box { height: 360px; background: #f7f7fb; border: 1px solid #eeeef8; border-radius: 16px; display:flex; align-items:center; justify-content:center; overflow: hidden; }
@@ -180,7 +198,18 @@ h1 {
 .au-map .vic { position:absolute; bottom:18px; right:26px; width:32px; height:22px; background:#4a3fc6; border-radius:4px; }
 .au-map .nsw { position:absolute; top:34px; right:20px; width:34px; height:38px; background:#a7a4ef; border-radius:6px; }
 
-.chart-box { height: 360px; background: #fff; border: 1px solid #eeeef8; border-radius: 16px; padding: 6px 0; }
+.chart-box { 
+  height: 360px; 
+  background: #fff; 
+  border: 1px solid #eeeef8; 
+  border-radius: 16px; 
+  padding: 6px 0; 
+  width: 100%; 
+  overflow: hidden; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
 
 .dash-bottom { margin-top: 24px; }
 .skills-list { display:flex; flex-direction:column; gap: 8px; }
