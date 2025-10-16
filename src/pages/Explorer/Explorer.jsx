@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Use two different APIs / 使用两个不同的API
 const API_BASE = "https://73fgxcxzz9.execute-api.ap-southeast-2.amazonaws.com";
+// 修复：移除末尾的 /available-states，因为我们会在 fetch 时追加路径
+const JOBS_API_BASE = "https://5s7x05ihle.execute-api.ap-southeast-2.amazonaws.com/development";
 
 const COLORS = {
   card: "var(--ca-card, #F7F7FC)",
@@ -11,17 +14,6 @@ const COLORS = {
   sub: "var(--ca-subtext, #6B7280)",
   primary: "var(--ca-primary, #5B5CE2)",
 };
-
-const REGIONS = [
-  { id: "vic-au", name: "Victoria, Australia", top: "NLP", demand: "+25% YoY" },
-  { id: "nsw-au", name: "New South Wales, Australia", top: "CV", demand: "+15% YoY" },
-  { id: "qld-au", name: "Queensland, Australia", top: "MLOps", demand: "+9% YoY" },
-  { id: "tas-au", name: "Tasmania, Australia", top: "Predictive", demand: "+6% YoY" },
-  { id: "mh-in", name: "Maharashtra, India", top: "CV", demand: "+12% YoY" },
-  { id: "on-ca", name: "Ontario, Canada", top: "NLP", demand: "+14% YoY" },
-  { id: "tx-us", name: "Texas, USA", top: "MLOps", demand: "+7% YoY" },
-  { id: "sp-br", name: "São Paulo, Brazil", top: "Maintenance", demand: "+5% YoY" },
-];
 
 // ---------- utils ----------
 const slugify = (s = "") =>
@@ -100,25 +92,44 @@ function RangeSelect({ value, onChange }) {
   );
 }
 
+// Get full state name / 获取州的完整名称
+function getStateName(stateCode) {
+  const stateNames = {
+    'VIC': 'Victoria',
+    'NSW': 'New South Wales',
+    'QLD': 'Queensland',
+    'WA': 'Western Australia',
+    'SA': 'South Australia',
+    'TAS': 'Tasmania',
+    'ACT': 'Australian Capital Territory',
+    'NT': 'Northern Territory'
+  };
+  return stateNames[stateCode] || stateCode;
+}
+
 export default function Explorer() {
   const nav = useNavigate();
 
-  // Skills（榜单 + 时间范围）
+  // Skills (ranking + time range) / Skills（榜单 + 时间范围）
   const [skills, setSkills] = useState([]);
   const [skillsLoading, setSkillsLoading] = useState(true);
   const [skillsErr, setSkillsErr] = useState(null);
-  const [skillsRange, setSkillsRange] = useState("1m"); // 默认近 1 个月
+  const [skillsRange, setSkillsRange] = useState("1m");
 
-  // Job titles（榜单 + 时间范围）
+  // Job titles (ranking + time range) / Job titles（榜单 + 时间范围）
   const [jobTitles, setJobTitles] = useState([]);
   const [jtLoading, setJtLoading] = useState(true);
   const [jtErr, setJtErr] = useState(null);
-  const [jtRange, setJtRange] = useState("1m"); // 默认近 1 个月
+  const [jtRange, setJtRange] = useState("1m");
 
-  // Regions 时间选择器（暂时仅 UI，占位）
+  // Regions - dynamic region data / Regions - 动态地区数据
+  const [regions, setRegions] = useState([]);
+  const [regionsLoading, setRegionsLoading] = useState(true);
+  const [regionsError, setRegionsError] = useState(null);
   const [regionsRange, setRegionsRange] = useState("1m");
+  const [availableStates, setAvailableStates] = useState([]);
 
-  // 拉取 Top 10 skills（随范围变化）
+  // Fetch Top 10 skills (using original API) / 拉取 Top 10 skills（使用原有API）
   useEffect(() => {
     let aborted = false;
     (async () => {
@@ -146,7 +157,7 @@ export default function Explorer() {
     };
   }, [skillsRange]);
 
-  // 拉取 Top 10 job titles（随范围变化）
+  // Fetch Top 10 job titles (using original API) / 拉取 Top 10 job titles（使用原有API）
   useEffect(() => {
     let aborted = false;
     (async () => {
@@ -174,11 +185,118 @@ export default function Explorer() {
     };
   }, [jtRange]);
 
+  // Fetch region data (using new Jobs API) / 拉取地区数据（使用新的Jobs API）
+  useEffect(() => {
+    let aborted = false;
+    (async () => {
+      try {
+        setRegionsLoading(true);
+        setRegionsError(null);
+        
+        console.log('=== Starting to fetch region data / 开始获取地区数据 ===');
+        
+        // 1. Get available states / 获取可用的州
+        // 修复：正确拼接 URL
+        const statesUrl = `${JOBS_API_BASE}/available-states`;
+        console.log('Calling available-states API...', statesUrl);
+        
+        const statesResponse = await fetch(statesUrl, {
+          headers: { Accept: "application/json" }
+        });
+        console.log('available-states response status / 响应状态:', statesResponse.status);
+        
+        if (!statesResponse.ok) {
+          throw new Error(`available-states API error / API返回错误: ${statesResponse.status}`);
+        }
+        
+        const states = await statesResponse.json();
+        console.log('States retrieved / 获取到的州列表:', states);
+        
+        if (aborted) return;
+        setAvailableStates(states);
+        
+        // 2. Get data for each state / 为每个州获取数据
+        const regionsList = [];
+        
+        for (const state of states) {
+          try {
+            const jobsUrl = `${JOBS_API_BASE}/jobs?state=${state}`;
+            console.log(`Fetching data for ${state}...`, jobsUrl);
+            
+            const jobsResponse = await fetch(jobsUrl, {
+              headers: { Accept: "application/json" }
+            });
+            console.log(`${state} response status / 数据响应状态:`, jobsResponse.status);
+            
+            if (!jobsResponse.ok) {
+              console.error(`Failed to fetch ${state} data / 获取 ${state} 数据失败: HTTP ${jobsResponse.status}`);
+              continue;
+            }
+            
+            const jobs = await jobsResponse.json();
+            console.log(`${state} retrieved ${jobs.length} job records / 获取到 ${jobs.length} 条职位数据`);
+            
+            // Process data / 处理数据
+            const skills = {};
+            let totalCount = 0;
+            
+            jobs.forEach(job => {
+              if (job.Skill) {
+                skills[job.Skill] = (skills[job.Skill] || 0) + (job.Count || 0);
+              }
+              totalCount += (job.Count || 0);
+            });
+            
+            // Find top skill / 找出最热门的技能
+            const topSkill = Object.entries(skills)
+              .sort((a, b) => b[1] - a[1])[0];
+            
+            // Add to regions list / 添加到地区列表
+            regionsList.push({
+              id: state,
+              name: `${getStateName(state)}, Australia`,
+              top: topSkill ? topSkill[0] : 'N/A',
+              demand: totalCount > 0 ? `${totalCount} jobs` : 'No data'
+            });
+            
+            console.log(`${state} processing complete / 处理完成:`, {
+              topSkill: topSkill ? topSkill[0] : 'N/A',
+              totalJobs: totalCount
+            });
+            
+          } catch (error) {
+            console.error(`Error processing ${state} data / 处理 ${state} 数据时出错:`, error);
+          }
+        }
+        
+        if (aborted) return;
+        
+        console.log('Final regions list / 最终的地区列表:', regionsList);
+        setRegions(regionsList);
+        
+      } catch (e) {
+        if (!aborted) {
+          console.error('Failed to fetch region data / 获取地区数据失败:', e);
+          setRegionsError(e.message || 'Failed to fetch region data');
+          setRegions([]);
+        }
+      } finally {
+        if (!aborted) {
+          setRegionsLoading(false);
+          console.log('=== Region data fetch complete / 地区数据获取完成 ===');
+        }
+      }
+    })();
+    return () => {
+      aborted = true;
+    };
+  }, [regionsRange]);
+
   return (
     <div style={{ padding: 24, color: COLORS.text }}>
       <h1 style={{ marginTop: 0 }}>Construction Explorer</h1>
 
-      {/* 1) 顶部：Top 10 skills（后端 + 时间选择器） */}
+      {/* 1) Top section: Top 10 skills / 顶部：Top 10 skills */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
           <h3 style={{ marginBottom: 8 }}>Top 10 Most Queried AI/ML Skills</h3>
@@ -204,23 +322,38 @@ export default function Explorer() {
         )}
       </div>
 
-      {/* 2) 中间：Regions（静态 + 时间选择器占位） */}
+      {/* 2) Middle section: Regions (dynamic data) / 中间：Regions（动态数据） */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <h3 style={{ marginBottom: 8 }}>Top 8 Most Viewed Regions</h3>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+          <h3 style={{ marginBottom: 8 }}>
+            Top {regions.length || '?'} Most Viewed Regions
+          </h3>
+          {regionsLoading && <span style={{ fontSize: 12, color: COLORS.sub }}>(loading…)</span>}
+          {regionsError && <span style={{ fontSize: 12, color: "#b4232c" }}>({regionsError})</span>}
+        </div>
         <RangeSelect value={regionsRange} onChange={setRegionsRange} />
       </div>
+      
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 20 }}>
-        {REGIONS.map((r) => (
-          <Card
-            key={r.id}
-            title={r.name}
-            meta={`Top skill: ${r.top} · ${r.demand}`}
-            onClick={() => nav(`/explorer/region/${r.id}`)}
-          />
-        ))}
+        {regions.length > 0 ? (
+          regions.map((r) => (
+            <Card
+              key={r.id}
+              title={r.name}
+              meta={`Top skill: ${r.top} · ${r.demand}`}
+              onClick={() => nav(`/explorer/region/${r.id}`)}
+            />
+          ))
+        ) : (
+          !regionsLoading && (
+            <div style={{ gridColumn: "1 / -1", color: COLORS.sub, fontSize: 13 }}>
+              {regionsError ? `Error: ${regionsError}` : 'No regions data available.'}
+            </div>
+          )
+        )}
       </div>
 
-      {/* 3) 底部：Top 10 job titles（后端 + 时间选择器） */}
+      {/* 3) Bottom section: Top 10 job titles / 底部：Top 10 job titles */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
           <h3 style={{ marginBottom: 8 }}>Top 10 Most In-Demand Job Titles</h3>
